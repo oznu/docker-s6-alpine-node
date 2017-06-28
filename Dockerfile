@@ -10,7 +10,7 @@ RUN apk add --no-cache curl coreutils tzdata shadow \
 COPY rootfs /
 
 # create user
-RUN groupmod -g 2000 users && \
+RUN groupmod -g 911 users && \
   useradd -u 911 -U -d /config -s /bin/false abc && \
   usermod -G users abc && \
 
