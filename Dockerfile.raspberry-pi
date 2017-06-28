@@ -25,5 +25,6 @@ RUN groupmod -g 911 users && \
   # clean up
   apk del --purge \
   rm -rf /tmp/*
+  
 
 ENTRYPOINT [ "/init" ]
