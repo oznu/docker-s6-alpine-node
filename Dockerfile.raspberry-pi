@@ -71,7 +71,7 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
 
 # Add S6 Overlay
 RUN echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories && \
- apk add --no-cache coreutils tzdata shadow \
+ apk add --no-cache curl coreutils tzdata shadow \
  && curl -L -s https://github.com/just-containers/s6-overlay/releases/download/v1.19.1.1/s6-overlay-${ARCH}.tar.gz | tar xvzf - -C / \
  && apk del --no-cache curl
 
