@@ -1,8 +1,0 @@
-services:
-  - docker
-
-install:
-  - docker build -t s6-node .
-
-script:
-  - docker run --rm s6-node node -v

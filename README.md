@@ -1,4 +1,4 @@
-[![Docker Automated buil](https://img.shields.io/docker/automated/oznu/homebridge.svg)](https://hub.docker.com/r/oznu/s6-node/) [![Travis](https://img.shields.io/travis/oznu/docker-s6-alpine-node.svg)](https://travis-ci.org/oznu/docker-s6-alpine-node)
+[![Docker Automated buil](https://img.shields.io/docker/automated/oznu/homebridge.svg)](https://hub.docker.com/r/oznu/s6-node/)
 
 # s6-node
 
