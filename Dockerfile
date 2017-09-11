@@ -1,7 +1,7 @@
 FROM oznu/s6-alpine
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 6.11.2
+ENV NODE_VERSION 8.4.0
 
 RUN addgroup -g 2000 node \
     && adduser -u 2000 -G node -s /bin/sh -D node \
@@ -46,7 +46,7 @@ RUN addgroup -g 2000 node \
     && rm -Rf "node-v$NODE_VERSION" \
     && rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
 
-ENV YARN_VERSION 0.24.6
+ENV YARN_VERSION 0.27.5
 
 RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   && for key in \
