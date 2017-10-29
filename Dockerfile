@@ -1,7 +1,7 @@
 FROM oznu/s6-alpine
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 8.8.0
+ENV NODE_VERSION 8.8.1
 
 RUN addgroup -g 2000 node \
     && adduser -u 2000 -G node -s /bin/sh -D node \
