@@ -2,7 +2,7 @@ services:
   - docker
 
 env:
-  - TARGET_IMAGE_TAG=test
+  - TARGET_IMAGE_TAG=armhf-test
 
 before_install:
   - git clone https://github.com/oznu/docker-arm-ci.git ~/docker-arm-ci
