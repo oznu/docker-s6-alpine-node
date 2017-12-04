@@ -1,0 +1,11 @@
+services:
+  - docker
+
+env:
+  - TARGET_IMAGE_TAG=test
+
+before_install:
+  - git clone https://github.com/oznu/docker-arm-ci.git ~/docker-arm-ci
+
+script:
+  - ~/docker-arm-ci/run.sh
