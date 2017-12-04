@@ -1,6 +1,6 @@
 FROM arm32v6/node:8.9.1-alpine
 
-ENV ARCH=amd64
+ENV ARCH=armhf
 
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories
 
