@@ -1,4 +1,4 @@
-FROM library/node:8.9.1-alpine
+FROM library/node:8.9.3-alpine
 
 ENV ARCH=amd64 S6_KEEP_ENV=1
 
