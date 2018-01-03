@@ -1,4 +1,4 @@
-FROM arm32v6/node:8.9.3-alpine
+FROM arm32v6/node:8.9.4-alpine
 
 ENV ARCH=armhf S6_KEEP_ENV=1
 
