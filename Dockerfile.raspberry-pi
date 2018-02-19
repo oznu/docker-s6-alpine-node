@@ -1,6 +1,6 @@
 FROM arm32v7/node:8.9.4-stretch
 
-ENV ARCH=amd64 S6_KEEP_ENV=1
+ENV ARCH=armhf S6_KEEP_ENV=1
 
 RUN apt-get update \
   && apt-get install -y apt-utils locales \
