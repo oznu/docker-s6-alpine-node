@@ -1,8 +1,9 @@
-FROM library/node:8.9.4-stretch
+FROM library/node:8.9.4-slim
 
 ENV ARCH=amd64 S6_KEEP_ENV=1
 
-RUN apt-get update \
+RUN echo "deb http://deb.debian.org/debian jessie-backports main" >> /etc/apt/sources.list \
+  && apt-get update \
   && apt-get install -y apt-utils locales \
   && apt-get install -y curl tzdata \
   && locale-gen en_US.UTF-8 \
