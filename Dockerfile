@@ -1,4 +1,4 @@
-FROM library/node:8.9.4-slim
+FROM library/node:8.9.4-stretch
 
 ENV ARCH=amd64 S6_KEEP_ENV=1
 
