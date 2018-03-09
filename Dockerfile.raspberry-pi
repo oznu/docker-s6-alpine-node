@@ -11,6 +11,7 @@ RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/main > /etc/apk/repositories 
   && apk add --no-cache \
     curl coreutils tzdata shadow libstdc++ \
     nodejs=${NODE_VERSION}-r0 nodejs-npm=${NODE_VERSION}-r0 yarn=${YARN_VERSION}-r0 \
+  && npm set prefix /usr/local \
   && curl -L -s https://github.com/just-containers/s6-overlay/releases/download/v1.21.1.1/s6-overlay-${ARCH}.tar.gz | tar xvzf - -C / \
   && apk del --no-cache curl \
   && groupmod -g 911 users && \
