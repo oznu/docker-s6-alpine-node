@@ -4,7 +4,7 @@
 
 This is a base Node.js image with the S6 Overlay and support for x86_64 and ARM (Raspberry Pi 1, 2, 3).
 
-[Alpine Linux](https://alpinelinux.org/) + [S6 Overlay](https://github.com/just-containers/s6-overlay) + [Node](https://nodejs.org/en/)
+Alpine/Debian Linux + [S6 Overlay](https://github.com/just-containers/s6-overlay) + [Node](https://nodejs.org/en/)
 
 ## Usage
 
@@ -14,10 +14,12 @@ x86_64:
 
 ```shell
 docker run oznu/s6-node
+docker run oznu/s6-node:debian
 ```
 
 ARM:
 
 ```shell
 docker run oznu/s6-node:armhf
+docker run oznu/s6-node:debian-armhf
 ```
