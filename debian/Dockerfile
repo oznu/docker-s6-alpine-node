@@ -1,8 +1,8 @@
 ARG S6_ARCH
-FROM multiarch/debian-debootstrap:${S6_ARCH}-stretch-slim
+FROM multiarch/debian-debootstrap:${S6_ARCH:-amd64}-stretch-slim
 
 ARG S6_ARCH
-ENV S6_ARCH=${S6_ARCH} S6_KEEP_ENV=1
+ENV S6_ARCH=${S6_ARCH:-amd64} S6_KEEP_ENV=1
 
 RUN apt-get update \
   && apt-get install -y curl tzdata locales \
