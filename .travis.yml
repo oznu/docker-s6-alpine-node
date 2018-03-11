@@ -2,7 +2,9 @@ services:
   - docker
 
 env:
-  - DOCKERFILE="debian/Dockerfile" TAG_PREFIX="debian"
+  - S6_ARCH=amd64
+  - S6_ARCH=armhf
+  - DOCKERFILE="debian/Dockerfile" TAG_PREFIX=":debian"
   - DOCKERFILE="Dockerfile" TAG_PREFIX=""
 
 before_script:
@@ -10,4 +12,4 @@ before_script:
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 script:
-  - docker build -f $DOCKERFILE --build-arg S6_ARCH=armhf -t oznu/s6-node:$TAG_PREFIX .
+  - docker build -f $DOCKERFILE --build-arg S6_ARCH=${S6_ARCH} -t oznu/s6-node$TAG_PREFIX .
