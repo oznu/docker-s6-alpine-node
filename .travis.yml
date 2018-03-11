@@ -2,11 +2,11 @@ services:
   - docker
 
 env:
-  - S6_ARCH=amd64
-  - S6_ARCH=armhf
-  - DOCKERFILE="debian/Dockerfile" TAG_PREFIX=":debian"
-  - DOCKERFILE="Dockerfile" TAG_PREFIX=""
-
+  - S6_ARCH=amd64 DOCKERFILE="Dockerfile" TAG_PREFIX=""
+  - S6_ARCH=armhf DOCKERFILE="Dockerfile" TAG_PREFIX=""
+  - S6_ARCH=amd64 DOCKERFILE="debian/Dockerfile" TAG_PREFIX=":debian"
+  - S6_ARCH=armhf DOCKERFILE="debian/Dockerfile" TAG_PREFIX=":debian"
+  
 before_script:
   - sudo apt-get --yes --no-install-recommends install binfmt-support qemu-user-static
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
