@@ -1,11 +1,13 @@
 services:
   - docker
 
-before_install:
-  - git clone https://github.com/oznu/docker-arm-ci.git ~/docker-arm-ci
+env:
+  - DOCKERFILE="debian/Dockerfile" TAG_PREFIX="debian"
+  - DOCKERFILE="Dockerfile" TAG_PREFIX=""
 
 before_script:
-  - export TARGET_IMAGE_TAG=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then if [ "$TRAVIS_BRANCH" = "master" ]; then echo "armhf"; else echo "$TRAVIS_BRANCH-armhf"; fi; else echo ""; fi)
+  - sudo apt-get --yes --no-install-recommends install binfmt-support qemu-user-static
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 script:
-  - ~/docker-arm-ci/run.sh
+  - docker build -f $DOCKERFILE --build-arg S6_ARCH=armhf -t oznu/s6-node:$TAG_PREFIX .
