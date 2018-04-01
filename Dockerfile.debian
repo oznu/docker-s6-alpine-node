@@ -5,7 +5,7 @@ ARG S6_ARCH
 ENV S6_ARCH=${S6_ARCH:-amd64} S6_KEEP_ENV=1
 
 RUN apt-get update \
-  && apt-get install -y curl tzdata locales \
+  && apt-get install -y curl tzdata locales psmisc procps iputils-ping \
   && locale-gen en_US.UTF-8 \
   && curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v1.21.1.1/s6-overlay-${S6_ARCH}.tar.gz" \
   && tar -xzf s6-overlay-${S6_ARCH}.tar.gz -C / \
@@ -17,11 +17,12 @@ RUN apt-get update \
   && apt-get clean \
   && rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
-ENV NODE_VERSION 8.10.0
+ENV NODE_VERSION 8.11.1
 
 RUN case "${S6_ARCH}" in \
     amd64) NODE_ARCH='x64';; \
     armhf) NODE_ARCH='armv7l';; \
+    aarch64) NODE_ARCH='arm64';; \
     *) echo "unsupported architecture"; exit 1 ;; \
   esac \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.gz" \

@@ -6,8 +6,9 @@ services:
 env:
   - S6_ARCH=amd64 DOCKERFILE="Dockerfile" TAG_SUFFIX="amd64"
   - S6_ARCH=armhf DOCKERFILE="Dockerfile" TAG_SUFFIX="armhf"
-  - S6_ARCH=amd64 DOCKERFILE="debian/Dockerfile" TAG_SUFFIX="debian-amd64"
-  - S6_ARCH=armhf DOCKERFILE="debian/Dockerfile" TAG_SUFFIX="debian-armhf"
+  - S6_ARCH=aarch64 DOCKERFILE="Dockerfile" TAG_SUFFIX="aarch64"
+  - S6_ARCH=amd64 DOCKERFILE="Dockerfile.debian" TAG_SUFFIX="debian-amd64"
+  - S6_ARCH=armhf DOCKERFILE="Dockerfile.debian" TAG_SUFFIX="debian-armhf"
 
 before_script:
   - sudo apt-get --yes --no-install-recommends install binfmt-support qemu-user-static
