@@ -15,6 +15,7 @@ RUN set -x && echo http://dl-cdn.alpinelinux.org/alpine/edge/main > /etc/apk/rep
     nodejs=${NODE_VERSION}-r1 nodejs-npm=${NODE_VERSION}-r1 yarn=${YARN_VERSION}-r0 \
   && paxctl -cm `which node` \
   && npm set prefix /usr/local \
+  && npm config set unsafe-perm true \
   && curl -L -s https://github.com/just-containers/s6-overlay/releases/download/v1.21.1.1/s6-overlay-${S6_ARCH}.tar.gz | tar xvzf - -C / \
   && groupmod -g 911 users && \
   useradd -u 911 -U -d /config -s /bin/false abc && \
