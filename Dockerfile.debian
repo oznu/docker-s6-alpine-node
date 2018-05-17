@@ -6,8 +6,7 @@ ENV S6_ARCH=${S6_ARCH:-amd64} S6_KEEP_ENV=1
 
 COPY qemu /usr/bin/
 
-RUN  chmod o+r /etc/resolv.conf \
-  && apt-get update \
+RUN apt-get update \
   && apt-get install -y curl tzdata locales psmisc procps iputils-ping \
   && locale-gen en_US.UTF-8 \
   && curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v1.21.1.1/s6-overlay-${S6_ARCH}.tar.gz" \
