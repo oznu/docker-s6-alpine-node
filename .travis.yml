@@ -4,11 +4,11 @@ services:
   - docker
 
 env:
-  - S6_ARCH=amd64 DOCKERFILE="Dockerfile" TAG_SUFFIX="amd64"
-  - S6_ARCH=armhf DOCKERFILE="Dockerfile" TAG_SUFFIX="armhf"
-  - S6_ARCH=aarch64 DOCKERFILE="Dockerfile" TAG_SUFFIX="aarch64"
-  - S6_ARCH=amd64 DOCKERFILE="Dockerfile.debian" TAG_SUFFIX="debian-amd64"
-  - S6_ARCH=armhf DOCKERFILE="Dockerfile.debian" TAG_SUFFIX="debian-armhf"
+  - BASE_IMAGE=library/alpine S6_ARCH=amd64 DOCKERFILE="Dockerfile" TAG_SUFFIX="amd64"
+  - BASE_IMAGE=arm32v6/alpine S6_ARCH=armhf DOCKERFILE="Dockerfile" TAG_SUFFIX="armhf"
+  - BASE_IMAGE=arm64v8/alpine S6_ARCH=aarch64 DOCKERFILE="Dockerfile" TAG_SUFFIX="aarch64"
+  - BASE_IMAGE=library/debian S6_ARCH=amd64 DOCKERFILE="Dockerfile.debian" TAG_SUFFIX="debian-amd64"
+  - BASE_IMAGE=arm32v5/debian S6_ARCH=armhf DOCKERFILE="Dockerfile.debian" TAG_SUFFIX="debian-armhf"
 
 before_script:
   - sudo apt-get --yes --no-install-recommends install binfmt-support qemu-user-static
@@ -17,6 +17,6 @@ before_script:
   - docker pull $TARGET_IMAGE:$TARGET_IMAGE_TAG && export IMAGE_CACHE="--cache-from $TARGET_IMAGE:$TARGET_IMAGE_TAG" || export IMAGE_CACHE=""
 
 script:
-  - docker build -f $DOCKERFILE $IMAGE_CACHE --build-arg S6_ARCH=${S6_ARCH} -t $TARGET_IMAGE:$TARGET_IMAGE_TAG .
+  - docker build -f $DOCKERFILE $IMAGE_CACHE --build-arg S6_ARCH=${S6_ARCH} BASE_IMAGE=${BASE_IMAGE} -t $TARGET_IMAGE:$TARGET_IMAGE_TAG .
   - docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
   - docker push $TARGET_IMAGE:$TARGET_IMAGE_TAG
