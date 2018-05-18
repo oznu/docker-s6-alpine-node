@@ -1,10 +1,11 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE:-library/alpine}:3.7
 
+ARG QEMU_ARCH
 ARG S6_ARCH
 ENV S6_ARCH=${S6_ARCH:-amd64} S6_KEEP_ENV=1
 
-COPY qemu /usr/bin/
+COPY qemu/qemu-${QEMU_ARCH:-x86_64}-static /usr/bin/
 
 ENV NODE_VERSION 8.11.1
 
