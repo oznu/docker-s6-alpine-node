@@ -1,12 +1,20 @@
-ARG S6_ARCH
-FROM multiarch/debian-debootstrap:${S6_ARCH:-amd64}-stretch-slim
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE:-library/debian}:9.4-slim
 
-ARG S6_ARCH
-ENV S6_ARCH=${S6_ARCH:-amd64} S6_KEEP_ENV=1
+ARG QEMU_ARCH
+ENV QEMU_ARCH=${QEMU_ARCH:-x86_64} S6_KEEP_ENV=1
 
-RUN apt-get update \
+COPY qemu/qemu-${QEMU_ARCH}-static /usr/bin/
+
+RUN set -x && apt-get update \
   && apt-get install -y curl tzdata locales psmisc procps iputils-ping \
   && locale-gen en_US.UTF-8 \
+  && case "${QEMU_ARCH}" in \
+    x86_64) S6_ARCH='amd64';; \
+    arm) S6_ARCH='armhf';; \
+    aarch64) S6_ARCH='aarch64';; \
+    *) echo "unsupported architecture"; exit 1 ;; \
+  esac \
   && curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v1.21.1.1/s6-overlay-${S6_ARCH}.tar.gz" \
   && tar -xzf s6-overlay-${S6_ARCH}.tar.gz -C / \
   && tar -xzf s6-overlay-${S6_ARCH}.tar.gz -C /usr ./bin \
@@ -17,14 +25,15 @@ RUN apt-get update \
   && apt-get clean \
   && rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
-ENV NODE_VERSION 8.11.1
+ENV NODE_VERSION 8.11.2
 
-RUN case "${S6_ARCH}" in \
-    amd64) NODE_ARCH='x64';; \
-    armhf) NODE_ARCH='armv7l';; \
+RUN case "${QEMU_ARCH}" in \
+    x86_64) NODE_ARCH='x64';; \
+    arm) NODE_ARCH='armv7l';; \
     aarch64) NODE_ARCH='arm64';; \
     *) echo "unsupported architecture"; exit 1 ;; \
   esac \
+  && set -x \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.gz" \
   && tar -xzf "node-v$NODE_VERSION-linux-$NODE_ARCH.tar.gz" -C /usr/local --strip-components=1 --no-same-owner \
   && rm "node-v$NODE_VERSION-linux-$NODE_ARCH.tar.gz" \
@@ -32,7 +41,7 @@ RUN case "${S6_ARCH}" in \
   && npm set prefix /usr/local \
   && npm config set unsafe-perm true
 
-ENV YARN_VERSION 1.5.1
+ENV YARN_VERSION 1.6.0
 
 RUN set -ex \
   && curl -fSLO "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
