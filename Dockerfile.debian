@@ -41,7 +41,7 @@ RUN case "${QEMU_ARCH}" in \
   && npm set prefix /usr/local \
   && npm config set unsafe-perm true
 
-ENV YARN_VERSION 1.6.0
+ENV YARN_VERSION 1.9.4
 
 RUN set -ex \
   && curl -fSLO "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \

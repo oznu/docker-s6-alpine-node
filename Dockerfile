@@ -1,5 +1,5 @@
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-library/alpine}:edge
+FROM ${BASE_IMAGE:-library/alpine}:3.8
 
 ARG QEMU_ARCH
 ENV QEMU_ARCH=${QEMU_ARCH:-x86_64} S6_KEEP_ENV=1
@@ -30,7 +30,7 @@ RUN set -x && curl -fLO https://github.com/oznu/alpine-node/releases/download/${
   && npm set prefix /usr/local \
   && npm config set unsafe-perm true
 
-ENV YARN_VERSION 1.6.0
+ENV YARN_VERSION 1.9.4
 
 RUN set -ex \
   && curl -fSLO "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
