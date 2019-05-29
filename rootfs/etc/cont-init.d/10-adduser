@@ -18,4 +18,4 @@ chown abc:abc /app
 chown abc:abc /config
 chown abc:abc /defaults
 
-chmod -R 600 /etc/logrotate.d/
+chmod -R 0644 /etc/logrotate.d
