@@ -22,7 +22,7 @@ RUN set -x && apk add --no-cache libgcc libstdc++ curl curl-dev coreutils tzdata
   && rm -rf /tmp/* \
   && sed -i "s#/var/log/messages {}.*# #g" /etc/logrotate.conf
 
-ENV NODE_VERSION 10.16.3
+ENV NODE_VERSION 12.13.0
 
 RUN set -x && curl -fLO https://github.com/oznu/alpine-node/releases/download/${NODE_VERSION}/node-v${NODE_VERSION}-linux-${QEMU_ARCH}-alpine.tar.gz \
   && tar -xzf node-v${NODE_VERSION}-linux-${QEMU_ARCH}-alpine.tar.gz -C /usr --strip-components=1 --no-same-owner \
@@ -31,7 +31,7 @@ RUN set -x && curl -fLO https://github.com/oznu/alpine-node/releases/download/${
   && npm set prefix /usr/local \
   && npm config set unsafe-perm true
 
-ENV YARN_VERSION 1.17.3
+ENV YARN_VERSION 1.19.1
 
 RUN set -ex \
   && curl -fSLO "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
