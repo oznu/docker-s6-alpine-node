@@ -7,7 +7,7 @@ ENV QEMU_ARCH=${QEMU_ARCH:-x86_64} S6_KEEP_ENV=1
 COPY qemu/qemu-${QEMU_ARCH}-static /usr/bin/
 
 RUN set -x && apt-get update \
-  && apt-get install -y curl tzdata locales psmisc procps iputils-ping logrotate \
+  && apt-get install -y curl tzdata locales psmisc procps iputils-ping logrotate libatomic1 \
   && locale-gen en_US.UTF-8 \
   && case "${QEMU_ARCH}" in \
     x86_64) S6_ARCH='amd64';; \
