@@ -1,7 +1,6 @@
 name: "Build"
 
-on:
-  push
+on: [tags]
 
 jobs:
   # build all the image variants
