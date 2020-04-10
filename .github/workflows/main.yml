@@ -15,6 +15,7 @@ jobs:
             os: ubuntu-latest
             TARGET_IMAGE: oznu/s6-node
             BASE_IMAGE: library/alpine
+            DOCKERFILE: Dockerfile
             QEMU_ARCH: x86_64
             TAG_SUFFIX: amd64
 
