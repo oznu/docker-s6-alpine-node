@@ -1,0 +1,128 @@
+name: "Build"
+
+on:
+  push
+
+jobs:
+  # build all the image variants
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # amd64 builds (Alpine)
+          - name: amd64
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: library/alpine
+            QEMU_ARCH: x86_64
+            TAG_SUFFIX: amd64
+
+          # arm32v6 builds (Alpine)
+          - name: arm32v6
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: arm32v6/alpine
+            DOCKERFILE: Dockerfile
+            QEMU_ARCH: arm
+            TAG_SUFFIX: arm32v6
+            ALT_SUFFIX: armhf
+
+          # arm64v8 builds (Alpine)
+          - name: arm64v8
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: arm64v8/alpine
+            DOCKERFILE: Dockerfile
+            QEMU_ARCH: aarch64
+            TAG_SUFFIX: arm64v8
+            ALT_SUFFIX: aarch64
+
+          # amd64 builds (Debian)
+          - name: amd64
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: library/debian
+            DOCKERFILE: Dockerfile.debian
+            QEMU_ARCH: x86_64
+            TAG_SUFFIX: debian-amd64
+
+          # arm32v7 builds (Debian)
+          - name: arm32v7
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: arm32v7/debian
+            DOCKERFILE: Dockerfile.debian
+            QEMU_ARCH: arm
+            TAG_SUFFIX: debian-arm32v7
+            ALT_SUFFIX: debian-armhf
+
+          # arm64v8 builds (Debian)
+          - name: arm64v8
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: arm64v8/debian
+            DOCKERFILE: Dockerfile.debian
+            QEMU_ARCH: aarch64
+            TAG_SUFFIX: debian-arm64v8
+            ALT_SUFFIX: debian-aarch64
+
+    steps:
+    # checkout repo
+    - uses: actions/checkout@v2
+
+    # setup multi-arch build support
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get --yes --no-install-recommends install binfmt-support qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+    # get branch / tag name
+    - name: Get Branch / Tag Name
+      id: get_branch
+      run: |
+        export RELEASE_NAME=$(if [[ ${GITHUB_REF} =~ "refs/tags/" ]]; then echo ${GITHUB_REF/refs\/tags\//}; else echo ${GITHUB_REF/refs\/heads\//}; fi)
+        echo $RELEASE_NAME
+        echo ::set-output name=NAME::${RELEASE_NAME}
+
+    # generate the image tag
+    - name: Get Image Tag
+      id: get_tag
+      run: |
+        export TARGET_IMAGE_TAG=$(if [ "${{ steps.get_branch.outputs.NAME }}" = "master" ]; then if [ "${{ matrix.TAG_SUFFIX }}" = "" ]; then echo "latest"; else echo "${{ matrix.TAG_SUFFIX }}"; fi; else if [ "${{ matrix.TAG_SUFFIX }}" = "" ]; then echo "${{ steps.get_branch.outputs.NAME }}"; else echo "${{ steps.get_branch.outputs.NAME }}-${{ matrix.TAG_SUFFIX }}"; fi; fi)
+        echo $TARGET_IMAGE_TAG
+        echo ::set-output name=NAME::${TARGET_IMAGE_TAG}
+
+    # pull the existing image from the registry, if it exists, to use as a build cache
+    - name: Pull Image Cache
+      id: get_image_cache
+      run: |
+        docker pull ${{ matrix.TARGET_IMAGE }}:${{ steps.get_tag.outputs.NAME }} && export IMAGE_CACHE="--cache-from ${{ matrix.TARGET_IMAGE }}:${{ steps.get_tag.outputs.NAME }}" || export IMAGE_CACHE=""
+        echo $IMAGE_CACHE
+        echo ::set-output name=IMAGE_CACHE::${IMAGE_CACHE}
+
+    # build the image
+    - name: Build Image
+      run: |
+        docker build -f ${{ matrix.DOCKERFILE }} ${{ steps.get_image_cache.outputs.IMAGE_CACHE }} --build-arg BASE_IMAGE=${{ matrix.BASE_IMAGE }} --build-arg QEMU_ARCH=${{ matrix.QEMU_ARCH }} -t ${{ matrix.TARGET_IMAGE }}:${{ steps.get_tag.outputs.NAME }} .
+
+    # push the image to docker hub
+    - name: Push Image
+      if: github.repository == 'oznu/docker-s6-alpine-node'
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        docker push ${{ matrix.TARGET_IMAGE }}:${{ steps.get_tag.outputs.NAME }}
+
+    # push alternate tags
+    - name: Push Alternate Tags
+      if: github.repository == 'oznu/docker-s6-alpine-node'
+      run: |
+        if [ -z "${{ matrix.ALT_SUFFIX }}" ]; then
+          echo "No alternate tags set for this build.";
+        else
+          echo "Tagging with alternate tag '${{ matrix.ALT_SUFFIX }}'";
+          export ALT_IMAGE_TAG=$(if [ "${{ steps.get_branch.outputs.NAME }}" = "master" ]; then if [ "${{ matrix.ALT_SUFFIX }}" = "" ]; then echo "error"; else echo "${{ matrix.ALT_SUFFIX }}"; fi; else if [ "${{ matrix.ALT_SUFFIX }}" = "" ]; then echo "${{ steps.get_branch.outputs.NAME }}"; else echo "${{ steps.get_branch.outputs.NAME }}-${{ matrix.ALT_SUFFIX }}"; fi; fi);
+          docker tag ${{ matrix.TARGET_IMAGE }}:${{ steps.get_tag.outputs.NAME }} ${{ matrix.TARGET_IMAGE }}:$ALT_IMAGE_TAG;
+          docker push ${{ matrix.TARGET_IMAGE }}:$ALT_IMAGE_TAG;
+        fi

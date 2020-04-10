@@ -1,4 +1,4 @@
-[![Docker Build Status](https://img.shields.io/docker/build/oznu/s6-node.svg?label=x64%20build&style=for-the-badge)](https://hub.docker.com/r/oznu/s6-node/) [![Travis](https://img.shields.io/travis/oznu/docker-s6-alpine-node.svg?label=arm%20build&style=for-the-badge)](https://travis-ci.org/oznu/docker-s6-alpine-node)
+[![Docker Build Status](https://img.shields.io/docker/build/oznu/s6-node.svg?label=x64%20build)](https://hub.docker.com/r/oznu/s6-node/) [![Travis](https://img.shields.io/travis/oznu/docker-s6-alpine-node.svg?label=arm%20build)](https://travis-ci.org/oznu/docker-s6-alpine-node)
 
 # s6-node
 
