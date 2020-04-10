@@ -1,6 +1,8 @@
 name: "Build"
 
-on: [tags]
+on:
+  release:
+    types: [created]
 
 jobs:
   # build all the image variants
