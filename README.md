@@ -13,8 +13,8 @@ See the [S6 Overlay Documentation](https://github.com/just-containers/s6-overlay
 x86_64:
 
 ```shell
-docker run oznu/s6-node:x86_64
-docker run oznu/s6-node:ubuntu-x86_64
+docker run oznu/s6-node:amd64
+docker run oznu/s6-node:ubuntu-amd64
 ```
 
 ARM:
