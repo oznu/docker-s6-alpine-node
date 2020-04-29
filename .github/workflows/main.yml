@@ -40,34 +40,34 @@ jobs:
             TAG_SUFFIX: arm64v8
             ALT_SUFFIX: aarch64
 
-          # amd64 builds (Debian)
+          # amd64 builds (Ubuntu)
           - name: amd64
             os: ubuntu-latest
             TARGET_IMAGE: oznu/s6-node
-            BASE_IMAGE: library/debian
-            DOCKERFILE: Dockerfile.debian
+            BASE_IMAGE: library/ubuntu
+            DOCKERFILE: Dockerfile.ubuntu
             QEMU_ARCH: x86_64
-            TAG_SUFFIX: debian-amd64
+            TAG_SUFFIX: ubuntu-amd64
 
-          # arm32v7 builds (Debian)
+          # arm32v7 builds (Ubuntu)
           - name: arm32v7
             os: ubuntu-latest
             TARGET_IMAGE: oznu/s6-node
-            BASE_IMAGE: arm32v7/debian
-            DOCKERFILE: Dockerfile.debian
+            BASE_IMAGE: arm32v7/ubuntu
+            DOCKERFILE: Dockerfile.ubuntu
             QEMU_ARCH: arm
-            TAG_SUFFIX: debian-arm32v7
-            ALT_SUFFIX: debian-armhf
+            TAG_SUFFIX: ubuntu-arm32v7
+            ALT_SUFFIX: ubuntu-armhf
 
-          # arm64v8 builds (Debian)
+          # arm64v8 builds (Ubuntu)
           - name: arm64v8
             os: ubuntu-latest
             TARGET_IMAGE: oznu/s6-node
-            BASE_IMAGE: arm64v8/debian
-            DOCKERFILE: Dockerfile.debian
+            BASE_IMAGE: arm64v8/ubuntu
+            DOCKERFILE: Dockerfile.ubuntu
             QEMU_ARCH: aarch64
-            TAG_SUFFIX: debian-arm64v8
-            ALT_SUFFIX: debian-aarch64
+            TAG_SUFFIX: ubuntu-arm64v8
+            ALT_SUFFIX: ubuntu-aarch64
 
     steps:
     # checkout repo
