@@ -1,5 +1,5 @@
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-library/debian}:9.6-slim
+FROM ${BASE_IMAGE:-library/debian}:10.3-slim
 
 ARG QEMU_ARCH
 ENV QEMU_ARCH=${QEMU_ARCH:-x86_64} S6_KEEP_ENV=1
@@ -27,7 +27,7 @@ RUN set -x && apt-get update \
   && rm -rf /etc/cron.daily/apt-compat /etc/cron.daily/dpkg /etc/cron.daily/passwd /etc/cron.daily/exim4-base \
   && sed -i "s#/var/log/messages {}.*# #g" /etc/logrotate.conf
 
-ENV NODE_VERSION 12.16.2
+ENV NODE_VERSION 12.16.3
 
 RUN case "${QEMU_ARCH}" in \
     x86_64) NODE_ARCH='x64';; \
@@ -42,16 +42,6 @@ RUN case "${QEMU_ARCH}" in \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
   && npm set prefix /usr/local \
   && npm config set unsafe-perm true
-
-ENV YARN_VERSION 1.22.4
-
-RUN set -ex \
-  && curl -fSLO "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
-  && mkdir -p /opt/yarn \
-  && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/yarn --strip-components=1 \
-  && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn \
-  && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarnpkg \
-  && rm yarn-v$YARN_VERSION.tar.gz
 
 COPY rootfs /
 
