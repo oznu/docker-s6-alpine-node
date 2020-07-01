@@ -6,7 +6,7 @@ ENV QEMU_ARCH=${QEMU_ARCH:-x86_64} S6_KEEP_ENV=1
 
 COPY qemu/qemu-${QEMU_ARCH}-static /usr/bin/
 
-RUN set -x && apk add --no-cache libgcc libstdc++ curl curl-dev coreutils tzdata shadow libstdc++ paxmark logrotate \
+RUN set -x && apk add --no-cache libgcc libstdc++ curl curl-dev coreutils tzdata shadow libstdc++ paxmark logrotate py3-pip \
   && case "${QEMU_ARCH}" in \
     x86_64) S6_ARCH='amd64';; \
     arm) S6_ARCH='armhf';; \
@@ -18,11 +18,12 @@ RUN set -x && apk add --no-cache libgcc libstdc++ curl curl-dev coreutils tzdata
   && useradd -u 911 -U -d /config -s /bin/false abc \
   && usermod -G users abc \
   && mkdir -p /app /config /defaults \
+  && pip3 install tzupdate \
   && apk del --purge \
   && rm -rf /tmp/* \
   && sed -i "s#/var/log/messages {}.*# #g" /etc/logrotate.conf
 
-ENV NODE_VERSION 12.18.1
+ENV NODE_VERSION 12.18.2
 
 RUN set -x && curl -fLO https://github.com/oznu/alpine-node/releases/download/${NODE_VERSION}/node-v${NODE_VERSION}-linux-${QEMU_ARCH}-alpine.tar.gz \
   && tar -xzf node-v${NODE_VERSION}-linux-${QEMU_ARCH}-alpine.tar.gz -C /usr --strip-components=1 --no-same-owner \
