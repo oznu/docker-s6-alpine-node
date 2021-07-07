@@ -23,7 +23,7 @@ RUN set -x && apk add --no-cache libgcc libstdc++ curl curl-dev coreutils tzdata
   && rm -rf /tmp/* \
   && sed -i "s#/var/log/messages {}.*# #g" /etc/logrotate.conf
 
-ENV NODE_VERSION 14.17.2
+ENV NODE_VERSION 14.17.3
 
 RUN set -x && curl -fLO https://github.com/oznu/alpine-node/releases/download/${NODE_VERSION}/node-v${NODE_VERSION}-linux-${QEMU_ARCH}-alpine.tar.gz \
   && tar -xzf node-v${NODE_VERSION}-linux-${QEMU_ARCH}-alpine.tar.gz -C /usr --strip-components=1 --no-same-owner \
