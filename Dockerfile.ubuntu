@@ -29,7 +29,7 @@ RUN set -x && apt-get update \
   && rm -rf /etc/cron.daily/apt-compat /etc/cron.daily/dpkg /etc/cron.daily/passwd /etc/cron.daily/exim4-base \
   && sed -i "s#/var/log/messages {}.*# #g" /etc/logrotate.conf
 
-ENV NODE_VERSION 14.17.3
+ENV NODE_VERSION 14.17.4
 
 RUN case "${QEMU_ARCH}" in \
     x86_64) NODE_ARCH='x64';; \
