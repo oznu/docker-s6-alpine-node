@@ -4,6 +4,9 @@ FROM ${BASE_IMAGE:-library/alpine}:3.12
 ARG QEMU_ARCH
 ENV QEMU_ARCH=${QEMU_ARCH:-x86_64} S6_KEEP_ENV=1
 
+ARG NODE_VERSION
+ENV NODE_VERSION=${NODE_VERSION:-14.18.1}
+
 COPY qemu/qemu-${QEMU_ARCH}-static /usr/bin/
 
 RUN set -x && apk add --no-cache libgcc libstdc++ curl curl-dev coreutils tzdata shadow libstdc++ paxmark logrotate py3-pip \
@@ -22,8 +25,6 @@ RUN set -x && apk add --no-cache libgcc libstdc++ curl curl-dev coreutils tzdata
   && apk del --purge \
   && rm -rf /tmp/* \
   && sed -i "s#/var/log/messages {}.*# #g" /etc/logrotate.conf
-
-ENV NODE_VERSION 14.18.1
 
 RUN set -x && curl -fLO https://github.com/oznu/alpine-node/releases/download/${NODE_VERSION}/node-v${NODE_VERSION}-linux-${QEMU_ARCH}-alpine.tar.gz \
   && tar -xzf node-v${NODE_VERSION}-linux-${QEMU_ARCH}-alpine.tar.gz -C /usr --strip-components=1 --no-same-owner \

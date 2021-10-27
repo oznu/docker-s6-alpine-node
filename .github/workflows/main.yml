@@ -81,25 +81,24 @@ jobs:
         docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
     # get branch / tag name
-    - name: Get Branch / Tag Name
-      id: get_branch
-      run: |
-        export RELEASE_NAME=$(if [[ ${GITHUB_REF} =~ "refs/tags/" ]]; then echo ${GITHUB_REF/refs\/tags\//}; else echo ${GITHUB_REF/refs\/heads\//}; fi)
-        echo $RELEASE_NAME
-        echo ::set-output name=NAME::${RELEASE_NAME}
+    - name: Get the upload URL for a release
+      id: get_release
+      uses: bruceadams/get-release@v1.2.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # generate the image tag
     - name: Get Image Tag
       id: get_tag
       run: |
-        export TARGET_IMAGE_TAG=$(if [ "${{ steps.get_branch.outputs.NAME }}" = "master" ]; then if [ "${{ matrix.TAG_SUFFIX }}" = "" ]; then echo "latest"; else echo "${{ matrix.TAG_SUFFIX }}"; fi; else if [ "${{ matrix.TAG_SUFFIX }}" = "" ]; then echo "${{ steps.get_branch.outputs.NAME }}"; else echo "${{ steps.get_branch.outputs.NAME }}-${{ matrix.TAG_SUFFIX }}"; fi; fi)
+        export TARGET_IMAGE_TAG=$(if [ "${{ steps.get_release.outputs.tag_name }}" = "master" ]; then if [ "${{ matrix.TAG_SUFFIX }}" = "" ]; then echo "latest"; else echo "${{ matrix.TAG_SUFFIX }}"; fi; else if [ "${{ matrix.TAG_SUFFIX }}" = "" ]; then echo "${{ steps.get_release.outputs.tag_name }}"; else echo "${{ steps.get_release.outputs.tag_name }}-${{ matrix.TAG_SUFFIX }}"; fi; fi)
         echo $TARGET_IMAGE_TAG
         echo ::set-output name=NAME::${TARGET_IMAGE_TAG}
 
     # build the image
     - name: Build Image
       run: |
-        docker build -f ${{ matrix.DOCKERFILE }} --build-arg BASE_IMAGE=${{ matrix.BASE_IMAGE }} --build-arg QEMU_ARCH=${{ matrix.QEMU_ARCH }} -t ${{ matrix.TARGET_IMAGE }}:${{ steps.get_tag.outputs.NAME }} .
+        docker build -f ${{ matrix.DOCKERFILE }} --build-arg NODE_VERSION=${{ steps.get_release.outputs.tag_name }} --build-arg BASE_IMAGE=${{ matrix.BASE_IMAGE }} --build-arg QEMU_ARCH=${{ matrix.QEMU_ARCH }} -t ${{ matrix.TARGET_IMAGE }}:${{ steps.get_tag.outputs.NAME }} .
 
     # push the image to docker hub
     - name: Push Image
@@ -116,7 +115,7 @@ jobs:
           echo "No alternate tags set for this build.";
         else
           echo "Tagging with alternate tag '${{ matrix.ALT_SUFFIX }}'";
-          export ALT_IMAGE_TAG=$(if [ "${{ steps.get_branch.outputs.NAME }}" = "master" ]; then if [ "${{ matrix.ALT_SUFFIX }}" = "" ]; then echo "error"; else echo "${{ matrix.ALT_SUFFIX }}"; fi; else if [ "${{ matrix.ALT_SUFFIX }}" = "" ]; then echo "${{ steps.get_branch.outputs.NAME }}"; else echo "${{ steps.get_branch.outputs.NAME }}-${{ matrix.ALT_SUFFIX }}"; fi; fi);
+          export ALT_IMAGE_TAG=$(if [ "${{ steps.get_release.outputs.tag_name }}" = "master" ]; then if [ "${{ matrix.ALT_SUFFIX }}" = "" ]; then echo "error"; else echo "${{ matrix.ALT_SUFFIX }}"; fi; else if [ "${{ matrix.ALT_SUFFIX }}" = "" ]; then echo "${{ steps.get_release.outputs.tag_name }}"; else echo "${{ steps.get_release.outputs.tag_name }}-${{ matrix.ALT_SUFFIX }}"; fi; fi);
           docker tag ${{ matrix.TARGET_IMAGE }}:${{ steps.get_tag.outputs.NAME }} ${{ matrix.TARGET_IMAGE }}:$ALT_IMAGE_TAG;
           docker push ${{ matrix.TARGET_IMAGE }}:$ALT_IMAGE_TAG;
         fi
