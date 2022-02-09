@@ -25,7 +25,7 @@ RUN set -x && apt-get update \
   && useradd -u 911 -U -d /config -s /bin/false abc \
   && usermod -G users abc \
   && mkdir -p /app /config /defaults \
-  && curl -sf https://bootstrap.pypa.io/get-pip.py | python3 \ 
+  && apt-get install -y python3-pip \
   && pip3 install tzupdate \
   && apt-get clean \
   && rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* \
