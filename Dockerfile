@@ -1,22 +1,22 @@
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-library/alpine}:3.12
+FROM ${BASE_IMAGE:-library/alpine}:3.15
 
 ARG QEMU_ARCH
 ENV QEMU_ARCH=${QEMU_ARCH:-x86_64} S6_KEEP_ENV=1
 
 ARG NODE_VERSION
-ENV NODE_VERSION=${NODE_VERSION:-14.18.1}
+ENV NODE_VERSION=${NODE_VERSION:-16.14.2}
 
 COPY qemu/qemu-${QEMU_ARCH}-static /usr/bin/
 
 RUN set -x && apk add --no-cache libgcc libstdc++ curl curl-dev coreutils tzdata shadow libstdc++ paxmark logrotate py3-pip \
   && case "${QEMU_ARCH}" in \
-    x86_64) S6_ARCH='amd64';; \
+    x86_64) S6_ARCH='x86_64';; \
     arm) S6_ARCH='armhf';; \
     aarch64) S6_ARCH='aarch64';; \
     *) echo "unsupported architecture"; exit 1 ;; \
   esac \
-  && curl -L -s https://github.com/just-containers/s6-overlay/releases/download/v1.21.1.1/s6-overlay-${S6_ARCH}.tar.gz | tar xvzf - -C / \
+  && curl -L -s https://github.com/just-containers/s6-overlay/releases/download/v3.1.0.1/s6-overlay-${S6_ARCH}.tar.xz | tar xvzf - -C / \
   && groupmod -g 911 users \
   && useradd -u 911 -U -d /config -s /bin/false abc \
   && usermod -G users abc \
