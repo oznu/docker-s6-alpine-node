@@ -3,6 +3,9 @@ name: Create Release
 on: 
   workflow_dispatch:
     inputs:
+      tag:
+        description: 'Tag'     
+        required: true
       version:
         description: 'Node.js Version'     
         required: true
@@ -21,8 +24,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
         with:
-          tag_name: ${{ github.event.inputs.version }}
-          release_name: ${{ github.event.inputs.version }}
+          tag_name: ${{ github.event.inputs.tag }}
+          release_name: ${{ github.event.inputs.tag }}
           body: |
             Node.js v${{ github.event.inputs.version }}
           prerelease: false
