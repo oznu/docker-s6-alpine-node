@@ -1,0 +1,93 @@
+name: "Re-Tag"
+
+on: 
+  workflow_dispatch:
+    inputs:
+      existing_tag:
+        description: 'Existing Tag'     
+        required: true
+      new_tag:
+        description: 'New Tag'     
+        required: true
+
+jobs:
+  # build all the image variants
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # amd64 builds (Alpine)
+          - name: amd64
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: library/alpine
+            DOCKERFILE: Dockerfile
+            QEMU_ARCH: x86_64
+            TAG_SUFFIX: amd64
+
+          # arm32v6 builds (Alpine)
+          - name: arm32v6
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: arm32v6/alpine
+            DOCKERFILE: Dockerfile
+            QEMU_ARCH: arm
+            TAG_SUFFIX: arm32v6
+            ALT_SUFFIX: armhf
+
+          # arm64v8 builds (Alpine)
+          - name: arm64v8
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: arm64v8/alpine
+            DOCKERFILE: Dockerfile
+            QEMU_ARCH: aarch64
+            TAG_SUFFIX: arm64v8
+            ALT_SUFFIX: aarch64
+
+          # amd64 builds (Ubuntu)
+          - name: amd64
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: library/ubuntu
+            DOCKERFILE: Dockerfile.ubuntu
+            QEMU_ARCH: x86_64
+            TAG_SUFFIX: ubuntu-amd64
+
+          # arm32v7 builds (Ubuntu)
+          - name: arm32v7
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: arm32v7/ubuntu
+            DOCKERFILE: Dockerfile.ubuntu
+            QEMU_ARCH: arm
+            TAG_SUFFIX: ubuntu-arm32v7
+            ALT_SUFFIX: ubuntu-armhf
+
+          # arm64v8 builds (Ubuntu)
+          - name: arm64v8
+            os: ubuntu-latest
+            TARGET_IMAGE: oznu/s6-node
+            BASE_IMAGE: arm64v8/ubuntu
+            DOCKERFILE: Dockerfile.ubuntu
+            QEMU_ARCH: aarch64
+            TAG_SUFFIX: ubuntu-arm64v8
+            ALT_SUFFIX: ubuntu-aarch64
+
+    steps:
+    # checkout repo
+    - uses: actions/checkout@v2
+
+    # build the image
+    - name: Pull Image and Re-Tag
+      run: |
+        docker pull ${{ matrix.TARGET_IMAGE }}:${{ github.event.inputs.existing_tag }}-${{ matrix.TAG_SUFFIX }}
+        docker tag ${{ matrix.TARGET_IMAGE }}:${{ github.event.inputs.existing_tag }}-${{ matrix.TAG_SUFFIX }} ${{ matrix.TARGET_IMAGE }}:${{ github.event.inputs.new_tag }}-${{ matrix.TAG_SUFFIX }}
+
+    # push the image to docker hub
+    - name: Push Image
+      if: github.repository == 'oznu/docker-s6-alpine-node'
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        docker push ${{ matrix.TARGET_IMAGE }}:${{ github.event.inputs.new_tag }}-${{ matrix.TAG_SUFFIX }}
