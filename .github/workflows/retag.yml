@@ -91,3 +91,15 @@ jobs:
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
         docker push ${{ matrix.TARGET_IMAGE }}:${{ github.event.inputs.new_tag }}-${{ matrix.TAG_SUFFIX }}
+        
+    # push alternate tags
+    - name: Push Alternate Tags
+      if: github.repository == 'oznu/docker-s6-alpine-node'
+      run: |
+        if [ -z "${{ matrix.ALT_SUFFIX }}" ]; then
+          echo "No alternate tags set for this build.";
+        else
+          echo "Tagging with alternate tag '${{ matrix.ALT_SUFFIX }}'";
+          docker tag ${{ matrix.TARGET_IMAGE }}:${{ github.event.inputs.existing_tag }}-${{ matrix.TAG_SUFFIX }} ${{ matrix.TARGET_IMAGE }}:${{ github.event.inputs.new_tag }}-${{ matrix.ALT_SUFFIX }};
+          docker push ${{ matrix.TARGET_IMAGE }}:${{ github.event.inputs.new_tag }}-${{ matrix.ALT_SUFFIX }};
+        fi
